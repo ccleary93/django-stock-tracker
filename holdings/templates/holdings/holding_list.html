@@ -1,32 +1,22 @@
-<h1>holding</h1>
-<div style="float:right">
-<!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
-<form>
-  <input type="text" placeholder="Search.." name="search"
-  {% if search %} value="{{ search }}" {% endif %}
-  >
-  <button type="submit"><i class="fa fa-search"></i></button>
-<a href="{% url 'holdings:all' %}"><i class="fa fa-undo"></i></a>
-</form>
-</div>
+<h1>Holdings</h1>
 <p>
 {% if holding_list %}
 <ul>
   {% for holding in holding_list %}
-   <li>
-        <p>{{ holding.name }} | {{ holding.ticker }} | {{ holding.amt }}</p>
-        {% if holding.owner == user %}
-        <p>Hi, {{ user }}</p>
+    {% if holding.owner == user %}
+     <li>
+        <p>{{ holding.name }} | {{ holding.ticker }} | {{ holding.amt }} | {{ holding.value }}</p>
         <a href="{% url 'holdings:holding_update' holding.id %}">Edit</a>
         <a href="{% url 'holdings:holding_delete' holding.id %}">Delete</a>
-        {% endif %}
     </li>
+    {% endif %}
   {% endfor %}
 </ul>
 {% else %}
   <p>You currently have no holdings saved.</p>
 {% endif %}
 </p>
+<h3>Total portfolio value: {{ total_value }}</h3>
 <p>
 <a href="{% url 'holdings:holding_create' %}">Add a holding</a>  |
 {% if user.is_authenticated %}

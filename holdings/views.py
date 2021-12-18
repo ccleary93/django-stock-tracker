@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 
 from holdings.models import Holding
 from holdings.forms import CreateForm, UpdateForm
+from .stock_check import StockCheck
 # Create your views here.
 
 class HoldingListView(LoginRequiredMixin, ListView):
@@ -30,8 +31,17 @@ class HoldingCreateView(LoginRequiredMixin, View):
         if not form.is_valid():
             ctx = {'form':form}
             return render(request, self.template_name, ctx)
-            
+
         holding = form.save(commit=False)
+
+        stock_check = StockCheck()
+        stock_price = stock_check.price_check(holding.ticker)
+        print(stock_price)
+        if not stock_price:
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+
+        holding.value = round(float(holding.amt) * stock_price, 2)
         holding.owner = self.request.user
         holding.save()
         return redirect(self.success_url)
