@@ -1,0 +1,10 @@
+{% load crispy_forms_tags %}
+
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'holdings:all' %}';return false;">
+  </form>
+</p>
