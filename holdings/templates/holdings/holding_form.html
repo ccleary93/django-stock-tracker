@@ -1,5 +1,7 @@
 {% load crispy_forms_tags %}
-
+{% if not_found %}
+<p>No data was found for this holding. Please ensure the ticker is correct.</p>
+{% endif %}
 <p>
   <form action="" method="post" id="upload_form" enctype="multipart/form-data">
     {% csrf_token %}

@@ -11,8 +11,27 @@ from .stock_check import StockCheck
 
 class HoldingListView(LoginRequiredMixin, ListView):
     model = Holding
-    #template_name = 'holdings/holding_list.html'
-    
+    template_name = 'holdings/holding_list.html'
+
+    def get_queryset(self):
+        return Holding.objects.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        total_value = sum([holding.value for holding in Holding.objects.filter(owner=self.request.user)])
+        context = {'total_value': total_value}
+        kwargs.update(context)
+        return super().get_context_data(**kwargs)
+
+
+# class HoldingListView(LoginRequiredMixin, View):
+#     def get(self):
+#         model = Holding
+#         template_name = 'holdings/holding_list.html'
+#
+#         holding_list = Holding.objects.filter(owner=self.request.user)
+#         return render_to_template(template_name)
+
+
 class HoldingDetailView(DetailView):
     model = Holding
 
@@ -38,7 +57,7 @@ class HoldingCreateView(LoginRequiredMixin, View):
         stock_price = stock_check.price_check(holding.ticker)
         print(stock_price)
         if not stock_price:
-            ctx = {'form': form}
+            ctx = {'form': form, 'not_found': True}
             return render(request, self.template_name, ctx)
 
         holding.value = round(float(holding.amt) * stock_price, 2)

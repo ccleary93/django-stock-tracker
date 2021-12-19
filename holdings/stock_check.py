@@ -17,7 +17,6 @@ class StockCheck():
 
         data = requests.get("https://www.alphavantage.co/query", params)
         data_json = data.json()
-        print(data_json['Global Quote']['05. price'])
         try:
             stock_price = float(data_json['Global Quote']['05. price'])
             print(stock_price)
