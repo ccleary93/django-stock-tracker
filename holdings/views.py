@@ -87,6 +87,16 @@ class HoldingUpdateView(LoginRequiredMixin, UpdateView):
         holding.save()
         return redirect(self.success_url)
         
-    
+class HoldingUpdatePriceView(LoginRequiredMixin, View):
+    success_url = 'holdings: all'
+
+    def get(self, request, pk):
+        holding = get_object_or_404(Holding, id=pk, owner=self.request.user)
+        stock_check = StockCheck()
+        stock_price = stock_check.price_check(holding.ticker)
+        holding.value = stock_price
+        holding.save()
+        return redirect(self.success_url)
+
 class HoldingDeleteView(LoginRequiredMixin, DeleteView):
     model = Holding

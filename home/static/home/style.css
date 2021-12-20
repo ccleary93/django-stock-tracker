@@ -1,0 +1,21 @@
+@import url(fontawesome-all.min.css);
+@import 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400';
+
+body {
+    background-color: #5584AC;
+    font: inherit;
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+}
+
+.outer-wrapper {
+    background-color: #F6F2D4;
+    border-radius: 25px;
+    height: fit-content;
+    margin: 60px auto 0px auto;
+    text-align: center;
+    width: fit-content;
+}
+
+.holding-list {
+    margin: 0px 30px 0px 0px;
+}

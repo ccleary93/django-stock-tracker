@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 {% load crispy_forms_tags %}
 {% if not_found %}
 <p>No data was found for this holding. Please ensure the ticker is correct.</p>
@@ -10,3 +12,4 @@
     <input type="submit" value="Cancel" onclick="window.location.href='{% url 'holdings:all' %}';return false;">
   </form>
 </p>
+{% endblock %}

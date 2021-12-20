@@ -8,6 +8,7 @@ environ.Env.read_env()
 class StockCheck():
     def __init__(self):
         self.alpha_api_key = env('API_KEY')
+        #self.polygon_api_key = env('POLYGON_API_KEY')
 
     def price_check(self, ticker):
         print(ticker)
