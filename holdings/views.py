@@ -22,19 +22,6 @@ class HoldingListView(LoginRequiredMixin, ListView):
         kwargs.update(context)
         return super().get_context_data(**kwargs)
 
-
-# class HoldingListView(LoginRequiredMixin, View):
-#     def get(self):
-#         model = Holding
-#         template_name = 'holdings/holding_list.html'
-#
-#         holding_list = Holding.objects.filter(owner=self.request.user)
-#         return render_to_template(template_name)
-
-
-class HoldingDetailView(DetailView):
-    model = Holding
-
 class HoldingCreateView(LoginRequiredMixin, View):
     template_name = 'holdings/holding_form.html'
     success_url = reverse_lazy('holdings:all')
@@ -55,7 +42,6 @@ class HoldingCreateView(LoginRequiredMixin, View):
 
         stock_check = StockCheck()
         stock_price = stock_check.price_check(holding.ticker)
-        print(stock_price)
         if not stock_price:
             ctx = {'form': form, 'not_found': True}
             return render(request, self.template_name, ctx)
@@ -84,6 +70,14 @@ class HoldingUpdateView(LoginRequiredMixin, UpdateView):
             return render(request, self.template_name, ctx)
             
         holding = form.save(commit=False)
+        stock_check = StockCheck()
+        stock_price = stock_check.price_check(holding.ticker)
+
+        if not stock_price:
+            ctx = {'form': form, 'api_calls_exceeded': True}
+            return render(request, self.template_name, ctx)
+
+        holding.value = round(float(holding.amt) * stock_price, 2)
         holding.save()
         return redirect(self.success_url)
         
@@ -94,7 +88,7 @@ class HoldingUpdatePriceView(LoginRequiredMixin, View):
         holding = get_object_or_404(Holding, id=pk, owner=self.request.user)
         stock_check = StockCheck()
         stock_price = stock_check.price_check(holding.ticker)
-        holding.value = stock_price
+        holding.value = float(holding.amt) * stock_price
         holding.save()
         return redirect(self.success_url)
 

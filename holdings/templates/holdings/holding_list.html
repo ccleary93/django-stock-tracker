@@ -10,8 +10,8 @@
         <p>{{ holding.name }} | {{ holding.ticker }} | {{ holding.amt }} | {{ holding.value }}</p>
          <p>Last updated: {{ holding.updated_at }}</p>
         <a href="{% url 'holdings:holding_update_price' holding.id %}">Update price</a>
-         <a href="{% url 'holdings:holding_update' holding.id %}">Edit</a>
-        <a href="{% url 'holdings:holding_delete' holding.id %}">Delete</a>
+         <a href="{% url 'holdings:holding_update' holding.id %}">Update amount</a>
+        <a href="{% url 'holdings:holding_delete' holding.id %}">Delete holding</a>
     </li>
     {% endif %}
   {% endfor %}
