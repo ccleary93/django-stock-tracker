@@ -88,8 +88,21 @@ class HoldingUpdatePriceView(LoginRequiredMixin, View):
         holding = get_object_or_404(Holding, id=pk, owner=self.request.user)
         stock_check = StockCheck()
         stock_price = stock_check.price_check(holding.ticker)
-        holding.value = float(holding.amt) * stock_price
+        holding.value = round(float(holding.amt) * stock_price, 2)
         holding.save()
+        return redirect(self.success_url)
+
+class HoldingUpdateAllView(LoginRequiredMixin, View):
+    success_url = 'holdings:all'
+
+    def get(self, request):
+        user_holdings = Holding.objects.filter(owner=self.request.user)
+        holdings_list = [holding.ticker for holding in user_holdings]
+        stock_check = StockCheck()
+        holdings_dict = stock_check.update_all(holdings_list)
+        for holding in user_holdings:
+            holding.value = round(float(holding.amt) * holdings_dict[holding.ticker], 2)
+            holding.save()
         return redirect(self.success_url)
 
 class HoldingDeleteView(LoginRequiredMixin, DeleteView):

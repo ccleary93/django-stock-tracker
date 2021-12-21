@@ -27,3 +27,19 @@ class StockCheck():
             return stock_price
         except:
             return False
+
+    def update_all(self, holdings):
+
+        querystring = {"symbols": ','.join(holdings)}
+
+        headers = {
+            'x-api-key': self.yahoo_api_key,
+        }
+
+        response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
+        response_json = response.json()
+        return_dict = {}
+        for i in range(len(holdings)):
+            return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['ask']
+        print(return_dict)
+        return return_dict
