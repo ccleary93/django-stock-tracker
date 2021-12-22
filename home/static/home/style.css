@@ -12,9 +12,38 @@ body {
     border-radius: 25px;
     height: fit-content;
     margin: 60px auto 0px auto;
-    min-width: 300px;
+    max-width: 500px;
+    padding: 0px 0px 20px 0px;
     text-align: center;
-    width: fit-content;
+    width: 80%;
+}
+
+.inner-wrapper {
+    background-color: #ededed;
+    border: solid;
+    border-radius: 25px;
+    height: fit-content;
+    margin: 20px auto 20px auto;
+    padding: 20px;
+    text-align: center;
+    width: 80%;
+}
+
+.stock-data {
+    display: inline-block;
+}
+
+.stock-buttons {
+    display: block;
+}
+
+td {
+    padding: 3px;
+}
+
+a {
+    color: inherit;
+    text-decorations: none;
 }
 
 .holding-list {

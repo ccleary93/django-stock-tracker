@@ -18,12 +18,11 @@ class StockCheck():
         headers = {
             'x-api-key': self.yahoo_api_key,
         }
-
+        print(ticker)
         response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
         response_json = response.json()
         try:
-            stock_price = float(response_json['quoteResponse']['result'][0]['ask'])
-            print(stock_price)
+            stock_price = float(response_json['quoteResponse']['result'][0]['regularMarketPrice'])
             return stock_price
         except:
             return False
@@ -40,6 +39,6 @@ class StockCheck():
         response_json = response.json()
         return_dict = {}
         for i in range(len(holdings)):
-            return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['ask']
+            return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
         print(return_dict)
         return return_dict

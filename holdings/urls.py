@@ -1,8 +1,11 @@
 from django.urls import path, reverse_lazy
+#from django.conf.urls import url
 from . import views
+#from portfolio.holdings import views as core_views
 
 app_name = 'holdings'
 urlpatterns = [
+    #url(r'^signup/$', core_views.signup, name='signup'),
     path('', views.HoldingListView.as_view(), name='all'),
     path('holding/create', views.HoldingCreateView.as_view(success_url=reverse_lazy('holdings:all')), name='holding_create'),
     path('holding/<int:pk>/update', views.HoldingUpdateView.as_view(success_url=reverse_lazy('holdings:all')), name='holding_update'),

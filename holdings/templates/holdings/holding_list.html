@@ -3,24 +3,34 @@
 <h1>Holdings</h1>
 <p>
 {% if holding_list %}
-<ul class="holding-list">
-  {% for holding in holding_list %}
-    {% if holding.owner == user %}
-     <li>
-        <p>{{ holding.name }} | {{ holding.ticker }} | {{ holding.amt }} | {{ holding.value }}</p>
-         <p>Last updated: {{ holding.updated_at }}</p>
-        <a href="{% url 'holdings:holding_update_price' holding.id %}">Update price</a>
-         <a href="{% url 'holdings:holding_update' holding.id %}">Update amount</a>
+{% for holding in holding_list %}
+{% if holding.owner == user %}
+<div class="inner-wrapper">
+    <div class="stock-data">
+        <table>
+            <tr>
+                <td>Name</td><td>Ticker</td><td>Amount</td><td>Price</td><td style="font-weight: bold;">Value</td>
+            </tr>
+            <tr>
+                <td>{{ holding.name }}</td><td>{{ holding.ticker }}</td><td>{{ holding.amt.normalize }}</td><td>{{ holding.price }}</td><td style="font-weight: bold;">{{ holding.value }}</td>
+            </tr>
+        </table>
+    </div>
+<!--<p>{{ holding.name }} | {{ holding.ticker }} | {{ holding.amt.normalize }} | {{ holding.value }}</p>-->
+    <div class="stock-buttons">
+        <a href="{% url 'holdings:holding_update' holding.id %}">Update amount</a>
         <a href="{% url 'holdings:holding_delete' holding.id %}">Delete holding</a>
-    </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
 {% else %}
   <p>You currently have no holdings saved.</p>
 {% endif %}
 </p>
 <h3>Total portfolio value: ${{ total_value }}</h3>
+<p>Last updated: {{ holding_list.0.updated_at }}</p>
 <p>
 <a href="{% url 'holdings:holding_update_all' %}">Update prices</a>  |
 <a href="{% url 'holdings:holding_create' %}">Add a holding</a>  |

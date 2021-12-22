@@ -46,6 +46,7 @@ class HoldingCreateView(LoginRequiredMixin, View):
             ctx = {'form': form, 'not_found': True}
             return render(request, self.template_name, ctx)
 
+        holding.price = stock_price
         holding.value = round(float(holding.amt) * stock_price, 2)
         holding.owner = self.request.user
         holding.save()
@@ -101,6 +102,7 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
         stock_check = StockCheck()
         holdings_dict = stock_check.update_all(holdings_list)
         for holding in user_holdings:
+            holding.price = holdings_dict[holding.ticker]
             holding.value = round(float(holding.amt) * holdings_dict[holding.ticker], 2)
             holding.save()
         return redirect(self.success_url)
