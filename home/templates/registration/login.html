@@ -1,3 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome</h1>
+<p>
+  This application allows you to track the total value of your stock portfolio.
+  It could come in handy if your portfolio is spread across multiple accounts
+  and wrappers.
+</p>
 {% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -8,3 +16,6 @@
 <input type="submit" class="btn btn-primary" value="Login" />
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
+
+<a href="{% url 'accounts:signup' %}">Create a new account</a>
+{% endblock %}
