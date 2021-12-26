@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load crispy_forms_tags %}
+<h1>Add holding</h1>
+<p>
+  We use yahoo finance for our data. Search for a stock at
+  <a href="https://finance.yahoo.com/" target="_blank">https://finance.yahoo.com/</a>
+  to get the appropriate ticker.
+</p>
 {% if not_found %}
 <p>No data was found for this holding. Please ensure the ticker is correct.</p>
 {% endif %}

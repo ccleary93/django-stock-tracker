@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'home.apps.HomeConfig',
     'holdings.apps.HoldingsConfig',
-    'accounts',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [

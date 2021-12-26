@@ -29,8 +29,20 @@
   <p>You currently have no holdings saved.</p>
 {% endif %}
 </p>
-<h3>Total portfolio value: ${{ total_value }}</h3>
-<p>Last updated: {{ holding_list.0.updated_at }}</p>
+
+    <h3>Total portfolio value: <div id="totalValue" style="display: inline">${{ total_value }}</div>
+    <form style="display: inline">
+        <select id="currency" onchange="selectCurrency()">
+            <option>USD</option>
+            <option>GBP</option>
+            <option>EUR</option>
+        </select>
+        </form>
+    </h3>
+
+
+<p>Last updated: {{ last_updated }}</p>
+
 <p>
 <a href="{% url 'holdings:holding_update_all' %}">Update prices</a>  |
 <a href="{% url 'holdings:holding_create' %}">Add a holding</a>  |
@@ -40,4 +52,19 @@
 <a href="{% url 'login' %}?next={% url 'holdings:all' %}">Login</a>
 {% endif %}
 </p>
+<script>
+    function selectCurrency() {
+    let total = document.getElementById('currency');
+    console.log(total.value)
+    if(total.value === 'GBP'){
+    document.getElementById('totalValue').innerHTML = {{ exchange_rates.GBP|floatformat:2 }}
+    }
+    else if(total.value === 'EUR'){
+    document.getElementById('totalValue').innerHTML = {{ exchange_rates.EUR|floatformat:2 }}
+    }
+    else {
+    document.getElementById('totalValue').innerHTML = {{ total_value }}
+    }
+}
+</script>
 {% endblock %}
