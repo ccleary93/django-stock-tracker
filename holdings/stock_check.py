@@ -29,7 +29,6 @@ class StockCheck():
 
     def update_all(self, holdings):
 
-        print(holdings)
         querystring = {"symbols": ','.join(holdings)}
 
         headers = {
@@ -40,9 +39,6 @@ class StockCheck():
         response_json = response.json()
         return_dict = {}
         for i in range(len(holdings)):
-            try:
-                return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
-            except:
-                print(response_json['quoteResponse']['result'][i])
+            return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
         print(return_dict)
         return return_dict

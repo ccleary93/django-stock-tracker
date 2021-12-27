@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from holdings.models import Holding, Rate
 from holdings.forms import CreateForm, UpdateForm
 from .stock_check import StockCheck
+
+import json
 # Create your views here.
 
 class HoldingListView(LoginRequiredMixin, ListView):
@@ -19,11 +21,22 @@ class HoldingListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         total_value = sum([holding.value for holding in Holding.objects.filter(owner=self.request.user)])
         last = list(Holding.objects.filter(owner=self.request.user).order_by('id'))[-1].updated_at
-        exchange_rates = {'GBP': total_value * Rate.objects.filter(name='GBP=X')[0].rate,
-                          'EUR': total_value * Rate.objects.filter(name='EUR=X')[0].rate,
-                          }
-        print(exchange_rates)
-        context = {'total_value': total_value, 'last_updated': last, 'exchange_rates': exchange_rates}
+
+        rate_objects = Rate.objects.all()
+        currency_names = []
+        exchange_rates = []
+        symbols = []
+        for rate in rate_objects:
+            currency_names.append(str(rate.name))
+            exchange_rates.append(float(rate.rate))
+            symbols.append(str(rate.symbol))
+
+        context = {'total_value': total_value,
+                   'last_updated': last,
+                   'exchange_rates': list(exchange_rates),
+                   'currency_names': list(currency_names),
+                   'symbols': list(symbols),
+                   'rates_count': len(currency_names)}
         kwargs.update(context)
         return super().get_context_data(**kwargs)
 
@@ -106,8 +119,10 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
         user_holdings = Holding.objects.filter(owner=self.request.user)
         rates = Rate.objects.all()
         holdings_list = [holding.ticker for holding in user_holdings]
-        holdings_list.append('GBP=X')
-        holdings_list.append('EUR=X')
+        # holdings_list.append('GBP=X')
+        # holdings_list.append('EUR=X')
+        for rate in rates:
+            holdings_list.append(rate.ticker)
         stock_check = StockCheck()
         holdings_dict = stock_check.update_all(holdings_list)
         for holding in user_holdings:
@@ -115,7 +130,7 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
             holding.value = round(float(holding.amt) * holdings_dict[holding.ticker], 2)
             holding.save()
         for rate in rates:
-            rate.rate = holdings_dict[rate.name]
+            rate.rate = holdings_dict[rate.ticker]
             rate.save()
         return redirect(self.success_url)
 

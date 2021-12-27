@@ -39,8 +39,6 @@
         </select>
         </form>
     </h3>
-
-
 <p>Last updated: {{ last_updated }}</p>
 
 <p>
@@ -54,17 +52,19 @@
 </p>
 <script>
     function selectCurrency() {
-    let total = document.getElementById('currency');
-    console.log(total.value)
-    if(total.value === 'GBP'){
-    document.getElementById('totalValue').innerHTML = {{ exchange_rates.GBP|floatformat:2 }}
+    let total = {{ total_value }};
+
+    let exchange_rates = {{ exchange_rates }}
+    let currency_names = {{ currency_names|safe }}
+    let rates_count = {{ rates_count }}
+    let symbols = {{ symbols|safe }}
+
+    for(let i=0; i<rates_count; i++){
+        if(currency_names[i] === document.getElementById('currency').value){
+            document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toFixed(2))
+        }
     }
-    else if(total.value === 'EUR'){
-    document.getElementById('totalValue').innerHTML = {{ exchange_rates.EUR|floatformat:2 }}
-    }
-    else {
-    document.getElementById('totalValue').innerHTML = {{ total_value }}
-    }
+
 }
 </script>
 {% endblock %}

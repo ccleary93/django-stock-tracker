@@ -1,7 +1,5 @@
 from django.urls import path, reverse_lazy
-#from django.conf.urls import url
 from . import views
-#from portfolio.holdings import views as core_views
 
 app_name = 'holdings'
 urlpatterns = [
