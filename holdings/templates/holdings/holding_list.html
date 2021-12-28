@@ -34,8 +34,11 @@
     <form style="display: inline">
         <select id="currency" onchange="selectCurrency()">
             <option>USD</option>
-            <option>GBP</option>
-            <option>EUR</option>
+            {% for currency in currency_names %}
+            {% if currency != 'USD' %}
+            <option>{{ currency }}</option>
+            {% endif %}
+            {% endfor %}
         </select>
         </form>
     </h3>
