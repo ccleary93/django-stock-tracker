@@ -19,8 +19,9 @@ class HoldingListView(LoginRequiredMixin, ListView):
         return Holding.objects.filter(owner=self.request.user)
 
     def get_context_data(self, **kwargs):
-        total_value = sum([holding.value for holding in Holding.objects.filter(owner=self.request.user)])
-        last = list(Holding.objects.filter(owner=self.request.user).order_by('id'))[-1].updated_at
+        holding_objects = Holding.objects.filter(owner=self.request.user)
+        total_value = sum([holding.value for holding in holding_objects])
+        last = list(holding_objects.order_by('id'))[-1].updated_at
 
         rate_objects = Rate.objects.all()
         currency_names = []
@@ -36,7 +37,11 @@ class HoldingListView(LoginRequiredMixin, ListView):
                    'exchange_rates': list(exchange_rates),
                    'currency_names': list(currency_names),
                    'symbols': list(symbols),
-                   'rates_count': len(currency_names)}
+                   'rates_count': len(currency_names),
+                   'holdings_names': [holding.ticker for holding in holding_objects],
+                   'holdings_price': [float(holding.price) for holding in holding_objects],
+                   'holdings_vals': [float(holding.value) for holding in holding_objects],
+                   }
         kwargs.update(context)
         return super().get_context_data(**kwargs)
 

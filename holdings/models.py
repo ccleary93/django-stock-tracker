@@ -15,6 +15,6 @@ class Holding(models.Model):
 
 class Rate(models.Model):
     name = models.CharField(max_length=20)
-    ticker = models.CharField(max_length=10, null=True)
+    ticker = models.CharField(max_length=10)
     rate = models.DecimalField(max_digits=10, decimal_places=5)
     symbol = models.CharField(max_length=3, null=True)
