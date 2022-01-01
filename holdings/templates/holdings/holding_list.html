@@ -53,6 +53,7 @@
 <p>
 <a href="{% url 'holdings:holding_update_all' %}">Update prices</a>  |
 <a href="{% url 'holdings:holding_create' %}">Add a holding</a>  |
+    <a href="{% url 'holdings:rate_create' %}">Add currency</a>  |
 {% if user.is_authenticated %}
 <a href="{% url 'logout' %}?next={% url 'holdings:all' %}">Logout</a>
 {% else %}
@@ -73,7 +74,12 @@
 
     for(let i=0; i<rates_count; i++){
         if(currency_names[i] === document.getElementById('currency').value){
-            document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toFixed(2));
+            if(symbols[i] !== 'None'){
+                console.log(symbols[i]);
+                document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toFixed(2));
+            } else {
+                document.getElementById('totalValue').innerHTML = String((total * exchange_rates[i]).toFixed(2));
+            }
             for(let j = 0; j < holdings.length; j++){
                 document.getElementById(holdings[j]).innerHTML = String((holdings_price[j] * exchange_rates[i]).toFixed(2));
                 document.getElementById(holdings[j]+'2').innerHTML = String((holdings_usd_val[j] * exchange_rates[i]).toFixed(2));

@@ -56,3 +56,18 @@ class StockCheck():
                 return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
         print(return_dict)
         return return_dict
+
+    def add_rate(self, ticker):
+
+        querystring = {"symbols": ticker}
+
+        headers = {
+            'x-api-key': self.yahoo_api_key,
+        }
+        print(ticker)
+        response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
+        response_json = response.json()
+        exchange_rate = response_json['quoteResponse']['result'][0]['regularMarketPrice']
+        if exchange_rate:
+            return exchange_rate
+        return False

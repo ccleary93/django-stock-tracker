@@ -5,7 +5,7 @@ from django.views.generic import ListView, DeleteView, DetailView, UpdateView
 from django.urls import reverse_lazy
 
 from holdings.models import Holding, Rate
-from holdings.forms import CreateForm, UpdateForm
+from holdings.forms import CreateForm, UpdateForm, RateCreateForm
 from .stock_check import StockCheck
 
 import json
@@ -20,8 +20,16 @@ class HoldingListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         holding_objects = Holding.objects.filter(owner=self.request.user)
-        total_value = sum([holding.value for holding in holding_objects])
-        last = list(holding_objects.order_by('id'))[-1].updated_at
+
+        if holding_objects:
+            total_value = sum([holding.value for holding in holding_objects])
+            last = list(holding_objects.order_by('id'))[-1].updated_at
+            holdings_names = [holding.ticker for holding in holding_objects]
+            holdings_price = [float(holding.price) for holding in holding_objects]
+            holdings_vals = [float(holding.value) for holding in holding_objects]
+
+        else:
+            total_value, last, holdings_names, holdings_price, holdings_vals = 0, '-', 0, 0, 0
 
         rate_objects = Rate.objects.all()
         currency_names = []
@@ -38,9 +46,9 @@ class HoldingListView(LoginRequiredMixin, ListView):
                    'currency_names': list(currency_names),
                    'symbols': list(symbols),
                    'rates_count': len(currency_names),
-                   'holdings_names': [holding.ticker for holding in holding_objects],
-                   'holdings_price': [float(holding.price) for holding in holding_objects],
-                   'holdings_vals': [float(holding.value) for holding in holding_objects],
+                   'holdings_names': holdings_names,
+                   'holdings_price': holdings_price,
+                   'holdings_vals': holdings_vals,
                    }
         kwargs.update(context)
         return super().get_context_data(**kwargs)
@@ -141,3 +149,36 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
 
 class HoldingDeleteView(LoginRequiredMixin, DeleteView):
     model = Holding
+
+class RateCreateView(LoginRequiredMixin, View):
+    template_name = 'holdings/rate_form.html'
+    success_url = reverse_lazy('holdings:all')
+
+    def get(self, request, pk=None):
+        form = RateCreateForm()
+        ctx = {'form': form}
+        return render(request, self.template_name, ctx)
+
+    def post(self, request, pk=None):
+        form = RateCreateForm(request.POST)
+
+        if not form.is_valid():
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+
+        rate = form.save(commit=False)
+
+        if rate.ticker[-2:] != '=X' or len(rate.ticker) != 5:
+            ctx = {'form': form}
+            return render(request, self.template_name, ctx)
+
+        stock_check = StockCheck()
+        exchange_rate = stock_check.add_rate(rate.ticker)
+        print(exchange_rate)
+        if not exchange_rate:
+            ctx = {'form': form, 'not_found': True}
+            return render(request, self.template_name, ctx)
+
+        rate.rate = exchange_rate
+        rate.save()
+        return redirect(self.success_url)

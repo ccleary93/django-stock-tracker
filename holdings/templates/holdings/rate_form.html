@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<h1>Add rate</h1>
+<p>
+  We use yahoo finance for our data. Search for an exchange rate at
+  <a href="https://finance.yahoo.com/" target="_blank">https://finance.yahoo.com/</a>
+  to get the appropriate ticker. The rates should be in the format USD/NEWCURRENCY -
+    the appropriate ticker should be in the format NEWCURRENCY=X.
+</p>
+{% if not_found %}
+<p>No data was found for this holding. Please ensure the ticker is correct and in the format NEWCURRENCY=X.</p>
+{% endif %}
+<p>
+  <form action="" method="post" id="upload_form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Submit">
+    <input type="submit" value="Cancel" onclick="window.location.href='{% url 'holdings:all' %}';return false;">
+  </form>
+</p>
+{% endblock %}
