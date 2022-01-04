@@ -8,8 +8,6 @@ from holdings.models import Holding, Rate
 from holdings.forms import CreateForm, UpdateForm, RateCreateForm
 from .stock_check import StockCheck
 
-import json
-# Create your views here.
 
 class HoldingListView(LoginRequiredMixin, ListView):
     model = Holding
@@ -109,17 +107,6 @@ class HoldingUpdateView(LoginRequiredMixin, UpdateView):
             ctx = {'form': form, 'api_calls_exceeded': True}
             return render(request, self.template_name, ctx)
 
-        holding.value = round(float(holding.amt) * stock_price, 2)
-        holding.save()
-        return redirect(self.success_url)
-        
-class HoldingUpdatePriceView(LoginRequiredMixin, View):
-    success_url = 'holdings: all'
-
-    def get(self, request, pk):
-        holding = get_object_or_404(Holding, id=pk, owner=self.request.user)
-        stock_check = StockCheck()
-        stock_price = stock_check.price_check(holding.ticker)
         holding.value = round(float(holding.amt) * stock_price, 2)
         holding.save()
         return redirect(self.success_url)
