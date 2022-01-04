@@ -132,8 +132,6 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
         user_holdings = Holding.objects.filter(owner=self.request.user)
         rates = Rate.objects.all()
         holdings_list = [holding.ticker for holding in user_holdings]
-        # holdings_list.append('GBP=X')
-        # holdings_list.append('EUR=X')
         for rate in rates:
             holdings_list.append(rate.ticker)
         stock_check = StockCheck()

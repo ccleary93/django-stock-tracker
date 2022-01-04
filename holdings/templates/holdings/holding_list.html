@@ -1,5 +1,6 @@
 {% extends 'base.html'%}
 {% block content %}
+{% load humanize %}
 <h1>Holdings</h1>
 <p>
 {% if holding_list %}
@@ -36,7 +37,7 @@
 {% endif %}
 </p>
 
-    <h3>Total portfolio value: <div id="totalValue" style="display: inline">${{ total_value }}</div>
+    <h3>Total portfolio value: <div id="totalValue" style="display: inline">${{ total_value|intcomma }}</div>
     <form style="display: inline">
         <select id="currency" onchange="selectCurrency()">
             <option>USD</option>
@@ -75,10 +76,9 @@
     for(let i=0; i<rates_count; i++){
         if(currency_names[i] === document.getElementById('currency').value){
             if(symbols[i] !== 'None'){
-                console.log(symbols[i]);
-                document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toFixed(2));
+                document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
             } else {
-                document.getElementById('totalValue').innerHTML = String((total * exchange_rates[i]).toFixed(2));
+                document.getElementById('totalValue').innerHTML = String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
             }
             for(let j = 0; j < holdings.length; j++){
                 document.getElementById(holdings[j]).innerHTML = String((holdings_price[j] * exchange_rates[i]).toFixed(2));

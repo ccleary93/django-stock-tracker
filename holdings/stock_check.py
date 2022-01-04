@@ -35,26 +35,39 @@ class StockCheck():
 
     def update_all(self, holdings):
 
-        querystring = {"symbols": ','.join(holdings)}
+        # yahoo finance api limits to 10 holdings per call
+        querystrings = []
+        for i in range(0,len(holdings),10):
+            querystring = {"symbols": ','.join(holdings[i:i+10])}
+            querystrings.append(querystring)
 
         headers = {
             'x-api-key': self.yahoo_api_key,
         }
 
-        response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
-        response_json = response.json()
+        print(querystrings)
+
+        # add j counter for individual holdings - sits outside querystring loop
+        j = 0
         return_dict = {}
-        for i in range(len(holdings)):
-            if response_json['quoteResponse']['result'][i]['quoteType'] == 'EQUITY':
-                if response_json['quoteResponse']['result'][i]['financialCurrency'] == 'USD':
-                    return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
+        for querystring in querystrings:
+            response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
+            response_json = response.json()
+            for result in response_json['quoteResponse']['result']:
+                # for equities we must check whether the currency is USD
+                if result['quoteType'] == 'EQUITY':
+                    if result['financialCurrency'] == 'USD':
+                        return_dict[holdings[j]] = result['regularMarketPrice']
+                    else:
+                        # if not USD check for match against rate object and divide by rate to get USD value
+                        for rate in Rate.objects.all():
+                            if result['financialCurrency'] == rate.name:
+                                return_dict[holdings[j]] = result['regularMarketPrice'] / float(rate.rate)
+                # if result is not an equity it should be a rate
                 else:
-                    for rate in Rate.objects.all():
-                        if response_json['quoteResponse']['result'][i]['financialCurrency'] == rate.name:
-                            return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice'] / float(rate.rate)
-            else:
-                return_dict[holdings[i]] = response_json['quoteResponse']['result'][i]['regularMarketPrice']
-        print(return_dict)
+                    return_dict[holdings[j]] = result['regularMarketPrice']
+                # increment j
+                j += 1
         return return_dict
 
     def add_rate(self, ticker):
