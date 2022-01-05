@@ -23,11 +23,11 @@ class StockCheck():
         response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
         response_json = response.json()
         try:
-            if response_json['quoteResponse']['result'][0]['financialCurrency'] == 'USD':
+            if response_json['quoteResponse']['result'][0]['currency'] == 'USD':
                 stock_price = response_json['quoteResponse']['result'][0]['regularMarketPrice']
             else:
                 for rate in Rate.objects.all():
-                    if response_json['quoteResponse']['result'][0]['financialCurrency'] == rate.name:
+                    if response_json['quoteResponse']['result'][0]['currency'].lower() == rate.name.lower():
                         stock_price = response_json['quoteResponse']['result'][0]['regularMarketPrice'] / float(rate.rate)
             return stock_price
         except:

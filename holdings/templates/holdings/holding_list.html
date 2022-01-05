@@ -73,20 +73,28 @@
     let holdings_usd_val = {{ holdings_vals }};
     let holdings_price = {{ holdings_price }}
 
-    for(let i=0; i<rates_count; i++){
-        if(currency_names[i] === document.getElementById('currency').value){
-            if(symbols[i] !== 'None'){
-                document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-            } else {
-                document.getElementById('totalValue').innerHTML = String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-            }
-            for(let j = 0; j < holdings.length; j++){
-                document.getElementById(holdings[j]).innerHTML = String((holdings_price[j] * exchange_rates[i]).toFixed(2));
-                document.getElementById(holdings[j]+'2').innerHTML = String((holdings_usd_val[j] * exchange_rates[i]).toFixed(2));
-            }
-        }
-    }
+    if(document.getElementById('currency').value === 'USD'){
+		document.getElementById('totalValue').innerHTML = '$' + String(total)
 
+		for(let j = 0; j < holdings.length; j++){
+					document.getElementById(holdings[j]).innerHTML = String(holdings_price[j].toFixed(2));
+					document.getElementById(holdings[j]+'2').innerHTML = String(holdings_usd_val[j].toFixed(2));
+				}
+	} else {
+		for(let i=0; i<rates_count; i++){
+			if(currency_names[i] === document.getElementById('currency').value){
+				if(symbols[i] !== 'None'){
+					document.getElementById('totalValue').innerHTML = symbols[i] + String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				} else {
+					document.getElementById('totalValue').innerHTML = String((total * exchange_rates[i]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				}
+				for(let j = 0; j < holdings.length; j++){
+					document.getElementById(holdings[j]).innerHTML = String((holdings_price[j] * exchange_rates[i]).toFixed(2));
+					document.getElementById(holdings[j]+'2').innerHTML = String((holdings_usd_val[j] * exchange_rates[i]).toFixed(2));
+				}
+			}
+		}
+	}
 }
 </script>
 {% endblock %}
