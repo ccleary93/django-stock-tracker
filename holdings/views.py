@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DeleteView, DetailView, UpdateView
 from django.urls import reverse_lazy
 
-from holdings.models import Holding, Rate
+from holdings.models import Holding, Rate, Userrates
 from holdings.forms import CreateForm, UpdateForm, RateCreateForm
 from .stock_check import StockCheck
 
@@ -29,11 +29,15 @@ class HoldingListView(LoginRequiredMixin, ListView):
         else:
             total_value, last, holdings_names, holdings_price, holdings_vals = 0, '-', 0, 0, 0
 
-        rate_objects = Rate.objects.all()
+        # load many-to-many joiner table 'Userrates' results for User
+        userrate_objects = list(Userrates.objects.filter(user=self.request.user))
         currency_names = []
         exchange_rates = []
         symbols = []
-        for rate in rate_objects:
+        # iterate through each userrate for the current user
+        for userrate in userrate_objects:
+            # load the Rate linked to this joiner table entry
+            rate = userrate.rate
             currency_names.append(str(rate.name))
             exchange_rates.append(float(rate.rate))
             symbols.append(str(rate.symbol))
@@ -117,7 +121,10 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
     def get(self, request):
 
         user_holdings = Holding.objects.filter(owner=self.request.user)
-        rates = Rate.objects.all()
+        userrates = Userrates.objects.filter(user=self.request.user)
+        rates = [userrate.rate for userrate in userrates]
+        print(rates)
+        # rates = Rate.objects.all()
         holdings_list = [holding.ticker for holding in user_holdings]
         for rate in rates:
             holdings_list.append(rate.ticker)
@@ -157,13 +164,22 @@ class RateCreateView(LoginRequiredMixin, View):
             ctx = {'form': form}
             return render(request, self.template_name, ctx)
 
-        stock_check = StockCheck()
-        exchange_rate = stock_check.add_rate(rate.ticker)
-        print(exchange_rate)
-        if not exchange_rate:
-            ctx = {'form': form, 'not_found': True}
-            return render(request, self.template_name, ctx)
-
-        rate.rate = exchange_rate
-        rate.save()
+        try:
+            Rate.objects.get(ticker=rate.ticker)
+        except:
+            # create Rate if it does not already exist
+            stock_check = StockCheck()
+            exchange_rate = stock_check.add_rate(rate.ticker)
+            print(exchange_rate)
+            if not exchange_rate:
+                ctx = {'form': form, 'not_found': True}
+                return render(request, self.template_name, ctx)
+            # first element of tuple is name, second is rate
+            rate.name = exchange_rate[0]
+            rate.rate = exchange_rate[1]
+            rate.ticker = rate.ticker
+            rate.save()
+        # create Userrates linking User to Rate (many-to-many)
+        userrate = Userrates(user=self.request.user, rate=Rate.objects.get(ticker=rate.ticker))
+        userrate.save()
         return redirect(self.success_url)

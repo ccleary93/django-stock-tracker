@@ -14,4 +14,4 @@ class UpdateForm(forms.ModelForm):
 class RateCreateForm(forms.ModelForm):
     class Meta:
         model = Rate
-        fields = ['name', 'ticker']
+        fields = ['ticker']

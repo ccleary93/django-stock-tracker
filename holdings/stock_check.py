@@ -80,7 +80,9 @@ class StockCheck():
         print(ticker)
         response = requests.request("GET", self.yahoo_url, headers=headers, params=querystring)
         response_json = response.json()
-        exchange_rate = response_json['quoteResponse']['result'][0]['regularMarketPrice']
-        if exchange_rate:
-            return exchange_rate
+        exchange = response_json['quoteResponse']['result'][0]['regularMarketPrice']
+        # if found return a tuple of currency name and exchange rate
+        if exchange:
+            return (response_json['quoteResponse']['result'][0]['currency'],
+                    response_json['quoteResponse']['result'][0]['regularMarketPrice'])
         return False
