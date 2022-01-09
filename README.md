@@ -1,6 +1,6 @@
 # Django stock tracker
 
-This is a web application built with python flask. It allows the user to track the overall value of their stock portfolio, which could be useful if it is spread across multiple accounts and wrappers, eliminating the need to log into each separately and manually total them all.
+This is a web application built with Django. It allows the user to track the overall value of their stock portfolio, which could be useful if it is spread across multiple accounts and wrappers, eliminating the need to log into each separately and manually total them all.
 
 
 ## Dependencies
