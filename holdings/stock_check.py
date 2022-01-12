@@ -56,12 +56,12 @@ class StockCheck():
             for result in response_json['quoteResponse']['result']:
                 # for equities we must check whether the currency is USD
                 if result['quoteType'] == 'EQUITY':
-                    if result['financialCurrency'] == 'USD':
+                    if result['currency'] == 'USD':
                         return_dict[holdings[j]] = result['regularMarketPrice']
                     else:
                         # if not USD check for match against rate object and divide by rate to get USD value
                         for rate in Rate.objects.all():
-                            if result['financialCurrency'] == rate.name:
+                            if result['currency'].lower() == rate.name.lower():
                                 return_dict[holdings[j]] = result['regularMarketPrice'] / float(rate.rate)
                 # if result is not an equity it should be a rate
                 else:

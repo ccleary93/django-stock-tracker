@@ -123,8 +123,6 @@ class HoldingUpdateAllView(LoginRequiredMixin, View):
         user_holdings = Holding.objects.filter(owner=self.request.user)
         userrates = Userrates.objects.filter(user=self.request.user)
         rates = [userrate.rate for userrate in userrates]
-        print(rates)
-        # rates = Rate.objects.all()
         holdings_list = [holding.ticker for holding in user_holdings]
         for rate in rates:
             holdings_list.append(rate.ticker)
