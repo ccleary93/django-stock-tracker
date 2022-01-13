@@ -108,7 +108,7 @@ class HoldingUpdateView(LoginRequiredMixin, UpdateView):
         stock_price = stock_check.price_check(holding.ticker)
 
         if not stock_price:
-            ctx = {'form': form, 'api_calls_exceeded': True}
+            ctx = {'form': form}
             return render(request, self.template_name, ctx)
 
         holding.value = round(float(holding.amt) * stock_price, 2)
@@ -159,7 +159,7 @@ class RateCreateView(LoginRequiredMixin, View):
         rate = form.save(commit=False)
 
         if len(rate.ticker) != 3:
-            ctx = {'form': form}
+            ctx = {'form': form, 'not_found': True}
             return render(request, self.template_name, ctx)
 
         # append =X to ticker for CURR/USD rate

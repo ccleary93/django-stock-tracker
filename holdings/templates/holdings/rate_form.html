@@ -3,11 +3,11 @@
 {% load crispy_forms_tags %}
 <h1>Add rate</h1>
 <p>
-  Enter the three-digit ISO 4217 code for the currency you wish to add. You can find a list of codes at wikipedia
+  Enter the 3-digit ISO 4217 code for the currency you wish to add. You can find a list of codes at wikipedia
   <a href="https://en.wikipedia.org/wiki/ISO_4217#Active_codes" target="_blank">here</a>.
 </p>
 {% if not_found %}
-<p>No data was found for this holding. Please ensure the ticker is correct and in the format NEWCURRENCY=X.</p>
+<p>No data was found for this holding. Please ensure you are entering a correct 3-digit code e.g. GBP.</p>
 {% endif %}
 <p>
   <form action="" method="post" id="upload_form" enctype="multipart/form-data">
