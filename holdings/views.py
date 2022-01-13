@@ -158,16 +158,19 @@ class RateCreateView(LoginRequiredMixin, View):
 
         rate = form.save(commit=False)
 
-        if rate.ticker[-2:] != '=X' or len(rate.ticker) != 5:
+        if len(rate.ticker) != 3:
             ctx = {'form': form}
             return render(request, self.template_name, ctx)
 
+        # append =X to ticker for CURR/USD rate
+        search_rate = rate.ticker + '=X'
+
         try:
-            Rate.objects.get(ticker=rate.ticker)
+            Rate.objects.get(ticker=search_rate)
         except:
             # create Rate if it does not already exist
             stock_check = StockCheck()
-            exchange_rate = stock_check.add_rate(rate.ticker)
+            exchange_rate = stock_check.add_rate(search_rate)
             print(exchange_rate)
             if not exchange_rate:
                 ctx = {'form': form, 'not_found': True}
@@ -175,9 +178,9 @@ class RateCreateView(LoginRequiredMixin, View):
             # first element of tuple is name, second is rate
             rate.name = exchange_rate[0]
             rate.rate = exchange_rate[1]
-            rate.ticker = rate.ticker
+            rate.ticker = search_rate
             rate.save()
         # create Userrates linking User to Rate (many-to-many)
-        userrate = Userrates(user=self.request.user, rate=Rate.objects.get(ticker=rate.ticker))
+        userrate = Userrates(user=self.request.user, rate=Rate.objects.get(ticker=search_rate))
         userrate.save()
         return redirect(self.success_url)

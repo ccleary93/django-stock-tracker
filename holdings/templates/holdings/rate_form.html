@@ -3,10 +3,8 @@
 {% load crispy_forms_tags %}
 <h1>Add rate</h1>
 <p>
-  We use yahoo finance for our data. Search for an exchange rate at
-  <a href="https://finance.yahoo.com/" target="_blank">https://finance.yahoo.com/</a>
-  to get the appropriate ticker. The rates should be in the format USD/NEWCURRENCY -
-    the appropriate ticker should be in the format NEWCURRENCY=X.
+  Enter the three-digit ISO 4217 code for the currency you wish to add. You can find a list of codes at wikipedia
+  <a href="https://en.wikipedia.org/wiki/ISO_4217#Active_codes" target="_blank">here</a>.
 </p>
 {% if not_found %}
 <p>No data was found for this holding. Please ensure the ticker is correct and in the format NEWCURRENCY=X.</p>

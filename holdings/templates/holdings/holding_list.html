@@ -74,7 +74,7 @@
     let holdings_price = {{ holdings_price }}
 
     if(document.getElementById('currency').value === 'USD'){
-		document.getElementById('totalValue').innerHTML = '$' + String(total)
+		document.getElementById('totalValue').innerHTML = '$' + String(total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}))
 
 		for(let j = 0; j < holdings.length; j++){
 					document.getElementById(holdings[j]).innerHTML = String(holdings_price[j].toFixed(2));
